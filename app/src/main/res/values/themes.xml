@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Window theme shown before Compose draws. The app itself is themed in GdirTheme. -->
+    <style name="Theme.Gdir" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
