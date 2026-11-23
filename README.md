@@ -12,6 +12,14 @@ Gdir is an Android app for [gdir.telae.net](https://gdir.telae.net/). It shows c
 - Departure platforms for public transport in Norway, from [Entur](https://entur.no/)
 - Light, dark or phone theme, built with Material Design 3
 
+## Screenshots
+
+<p>
+  <img src="screenshots/search-dark.png" alt="Search screen in dark mode" width="260">
+  <img src="screenshots/results-light.png" alt="Route results in light mode" width="260">
+  <img src="screenshots/settings-dark.png" alt="Settings in dark mode" width="260">
+</p>
+
 ## Download
 
 Get the latest APK from the [Releases](../../releases) page.
