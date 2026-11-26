@@ -28,14 +28,14 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
-private enum class Screen { Search, Results, Settings }
+private enum class Screen { Search, Results }
 
 /** How long to wait for platforms before showing the results without them. */
 private const val PLATFORM_WAIT_MS = 4_000L
 
 /**
- * App root. Holds the search form state and switches between the search,
- * results and settings screens.
+ * App root. Holds the search form state and switches between the search and
+ * results screens. Settings open as a bottom sheet on top.
  */
 @Composable
 internal fun GdirApp(settings: GdirSettings) {
@@ -45,6 +45,7 @@ internal fun GdirApp(settings: GdirSettings) {
     var transitModes by rememberSaveable { mutableStateOf(setOf(TransitMode.All)) }
 
     var screen by remember { mutableStateOf(Screen.Search) }
+    var showSettings by rememberSaveable { mutableStateOf(false) }
     var formState by remember { mutableStateOf<DirectionsState>(DirectionsState.Idle) }
     var result by remember { mutableStateOf<DirectionsState.Success?>(null) }
 
@@ -162,6 +163,13 @@ internal fun GdirApp(settings: GdirSettings) {
         }
     }
 
+    if (showSettings) {
+        SettingsSheet(
+            settings = settings,
+            onDismiss = { showSettings = false }
+        )
+    }
+
     BackHandler(enabled = screen != Screen.Search) {
         screen = Screen.Search
     }
@@ -181,11 +189,6 @@ internal fun GdirApp(settings: GdirSettings) {
         val shownResult = result
 
         when {
-            shownScreen == Screen.Settings -> SettingsScreen(
-                settings = settings,
-                onBack = { screen = Screen.Search }
-            )
-
             shownScreen == Screen.Results && shownResult != null -> ResultsScreen(
                 result = shownResult,
                 onBack = { screen = Screen.Search },
@@ -208,7 +211,7 @@ internal fun GdirApp(settings: GdirSettings) {
                 onTransitModesChange = { transitModes = it },
                 formState = formState,
                 onSearch = { search() },
-                onOpenSettings = { screen = Screen.Settings }
+                onOpenSettings = { showSettings = true }
             )
         }
     }

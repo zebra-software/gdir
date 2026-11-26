@@ -21,16 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
-import com.zebrasoftware.gdir.data.SOURCE_URL
 
 /** A titled group of controls on a tonal surface. */
 @Composable
@@ -90,35 +81,6 @@ internal fun ErrorBanner(
             )
         }
     }
-}
-
-/** Credits the website that Gdir is a client for. */
-@Composable
-internal fun AttributionFooter(modifier: Modifier = Modifier) {
-    val linkStyles = TextLinkStyles(
-        style = SpanStyle(
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Medium,
-            textDecoration = TextDecoration.Underline
-        )
-    )
-
-    val text = buildAnnotatedString {
-        append("An Android app for ")
-        withLink(LinkAnnotation.Url(url = SOURCE_URL, styles = linkStyles)) {
-            append("gdir.telae.net")
-        }
-    }
-
-    Text(
-        text = text,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        textAlign = TextAlign.Center
-    )
 }
 
 /** Segmented button colours that use the primary container for the selected item. */

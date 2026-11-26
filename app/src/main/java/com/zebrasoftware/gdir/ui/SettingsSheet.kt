@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -14,7 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DarkMode
@@ -24,19 +22,15 @@ import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,23 +42,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zebrasoftware.gdir.data.Country
 import com.zebrasoftware.gdir.data.GdirSettings
+import com.zebrasoftware.gdir.data.SOURCE_URL
 import com.zebrasoftware.gdir.data.ThemeMode
 import com.zebrasoftware.gdir.data.countries
 import kotlinx.coroutines.launch
 
+/** Settings, shown as a bottom sheet so the app stays on one screen (like Dude). */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SettingsScreen(
+internal fun SettingsSheet(
     settings: GdirSettings,
-    onBack: () -> Unit
+    onDismiss: () -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var showCountrySheet by rememberSaveable { mutableStateOf(false) }
     val country = countries.firstOrNull { it.code == settings.countryCode }
 
@@ -79,34 +79,23 @@ internal fun SettingsScreen(
         )
     }
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopAppBar(
-                title = { Text("Settings") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
-        }
-    ) { innerPadding ->
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding())
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
-                .padding(top = 8.dp, bottom = innerPadding.calculateBottomPadding() + 16.dp),
+                .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            Text(
+                text = "Settings",
+                modifier = Modifier.padding(horizontal = 8.dp),
+                style = MaterialTheme.typography.titleLarge
+            )
+
             SectionCard(title = "Appearance") {
                 Text(
                     text = "Theme",
@@ -121,21 +110,10 @@ internal fun SettingsScreen(
             }
 
             SectionCard(title = "Directions") {
-                SettingRow(
-                    icon = Icons.Filled.Public,
-                    title = "Country",
-                    subtitle = country?.name ?: "Any country",
-                    modifier = Modifier.clickable(
-                        onClickLabel = "Choose country",
-                        onClick = { showCountrySheet = true }
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowDropDown,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                CountryRow(
+                    country = country,
+                    onClick = { showCountrySheet = true }
+                )
 
                 Text(
                     text = "Helps find the right place when names exist in more than one country. " +
@@ -145,9 +123,47 @@ internal fun SettingsScreen(
                 )
             }
 
-            AttributionFooter()
+            SectionCard(title = "About") {
+                Text(
+                    text = "Get Directions, by Zebra Software",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = sourceLinkText(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "Directions from gdir.telae.net, powered by Google. " +
+                        "Platform information from Entur, under the Norwegian Licence for Open Government Data (NLOD).",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
+}
+
+/** "An Android app for gdir.telae.net", with the site as a link. */
+@Composable
+private fun sourceLinkText() = buildAnnotatedString {
+    append("An Android app for ")
+    withLink(
+        LinkAnnotation.Url(
+            url = SOURCE_URL,
+            styles = TextLinkStyles(
+                style = SpanStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium,
+                    textDecoration = TextDecoration.Underline
+                )
+            )
+        )
+    ) {
+        append("gdir.telae.net")
+    }
+    append(".")
 }
 
 @Composable
@@ -182,40 +198,42 @@ private fun ThemeSelector(
 }
 
 @Composable
-private fun SettingRow(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    modifier: Modifier = Modifier,
-    trailing: @Composable () -> Unit
+private fun CountryRow(
+    country: Country?,
+    onClick: () -> Unit
 ) {
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClickLabel = "Choose country", onClick = onClick)
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = icon,
+            imageVector = Icons.Filled.Public,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = title,
+                text = "Country",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = subtitle,
+                text = country?.name ?: "Any country",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
-        trailing()
+        Icon(
+            imageVector = Icons.Filled.ArrowDropDown,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -275,7 +293,7 @@ private fun CountrySheet(
         ) {
             if (query.isBlank()) {
                 item(key = "any") {
-                    CountryRow(
+                    CountryListRow(
                         name = "Any country",
                         selected = selectedCountry == null,
                         onClick = { select(null) }
@@ -284,7 +302,7 @@ private fun CountrySheet(
             }
 
             items(items = filteredCountries, key = { it.code }) { country ->
-                CountryRow(
+                CountryListRow(
                     name = country.name,
                     selected = country.code == selectedCountry?.code,
                     onClick = { select(country) }
@@ -295,7 +313,7 @@ private fun CountrySheet(
 }
 
 @Composable
-private fun CountryRow(
+private fun CountryListRow(
     name: String,
     selected: Boolean,
     onClick: () -> Unit

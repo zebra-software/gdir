@@ -52,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.zebrasoftware.gdir.data.DirectionsState
@@ -90,7 +91,18 @@ internal fun SearchScreen(
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = { Text("Gdir") },
+                title = {
+                    // Starts where the cards' rounded corners turn straight
+                    // (16 dp screen margin + 28 dp corner radius = 44 dp from the edge;
+                    // the top app bar already insets its title by 16 dp).
+                    Text(
+                        text = "Get Directions",
+                        modifier = Modifier.padding(start = 28.dp),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                },
                 actions = {
                     IconButton(onClick = onOpenSettings) {
                         Icon(

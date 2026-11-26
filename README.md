@@ -1,8 +1,8 @@
-# Gdir
+# Get Directions
 
 A simple, text-based public transport, driving, cycling and walking directions app for Android.
 
-Gdir is an Android app for [gdir.telae.net](https://gdir.telae.net/). It shows clear, readable directions without a map.
+Get Directions (Gdir) is an Android app for [gdir.telae.net](https://gdir.telae.net/). It shows clear, readable directions without a map.
 
 ## Features
 
@@ -24,7 +24,7 @@ Gdir is an Android app for [gdir.telae.net](https://gdir.telae.net/). It shows c
 
 Get the latest APK from the [Releases](../../releases) page.
 
-Gdir needs Android 16 or newer.
+Get Directions needs Android 16 or newer.
 
 ## Credits
 
