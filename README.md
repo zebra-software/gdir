@@ -15,9 +15,9 @@ Get Directions (Gdir) is an Android app for [gdir.telae.net](https://gdir.telae.
 ## Screenshots
 
 <p>
-  <img src="screenshots/search-dark.png" alt="Search screen in dark mode" width="260">
-  <img src="screenshots/results-light.png" alt="Route results in light mode" width="260">
-  <img src="screenshots/settings-dark.png" alt="Settings in dark mode" width="260">
+  <img src="screenshots/search-light.png" alt="Search screen in light mode" width="260">
+  <img src="screenshots/results-dark.png" alt="Route results with platforms in dark mode" width="260">
+  <img src="screenshots/settings-light.png" alt="Settings in light mode" width="260">
 </p>
 
 ## Download

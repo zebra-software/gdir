@@ -114,13 +114,6 @@ internal fun SettingsSheet(
                     country = country,
                     onClick = { showCountrySheet = true }
                 )
-
-                Text(
-                    text = "Helps find the right place when names exist in more than one country. " +
-                        "Platforms are shown for public transport in Norway, whichever country is chosen.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
 
             SectionCard(title = "About") {
@@ -205,7 +198,7 @@ private fun CountryRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClickLabel = "Choose country", onClick = onClick)
+            .clickable(onClickLabel = "Choose preferred country", onClick = onClick)
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -218,7 +211,7 @@ private fun CountryRow(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Country",
+                text = "Preferred country",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -269,7 +262,7 @@ private fun CountrySheet(
         sheetState = sheetState
     ) {
         Text(
-            text = "Country",
+            text = "Preferred country",
             modifier = Modifier.padding(horizontal = 24.dp),
             style = MaterialTheme.typography.titleLarge
         )
